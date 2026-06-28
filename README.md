@@ -1,0 +1,1 @@
+# mesenger-vlastni-aplikace-cz
