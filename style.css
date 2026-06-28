@@ -1025,3 +1025,327 @@ body {
 * { scrollbar-width: thin; scrollbar-color: var(--lcars-primary) transparent; }
 *::-webkit-scrollbar { width: 4px; height: 4px; }
 *::-webkit-scrollbar-thumb { background: var(--lcars-primary); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   @MEDIA QUERIES — RESPONZIVNÍ DESIGN
+   Breakpointy:
+     900px  → Tablet landscape
+     650px  → Tablet portrait / velký telefon
+     420px  → Malý telefon
+═══════════════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────────────────────
+   TABLET LANDSCAPE — max-width: 900px
+─────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+
+  /* Header — zjednodušení */
+  .header-bars { width: 70px; }
+  .header-curve-block { width: 36px; }
+  .header-main-title { font-size: 13px; letter-spacing: 2px; }
+  .header-sub { font-size: 8px; letter-spacing: 2px; }
+  .header-right-cap { width: 12px; }
+
+  /* Nav — užší */
+  :root { --nav-w: 150px; }
+
+  .nav-btn {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 12px 10px;
+  }
+
+  /* Zprávy — širší bubliny */
+  .message { max-width: 82%; }
+
+  /* Galerie — méně sloupců */
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  /* Settings — méně sloupců */
+  .settings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   TABLET PORTRAIT / VELKÝ TELEFON — max-width: 650px
+   Klíčová změna: NAV jde DOLŮ jako tab bar!
+─────────────────────────────────────────────────────────────── */
+@media (max-width: 650px) {
+
+  /* App container — sloupec místo řádku */
+  #appContainer {
+    flex-direction: column;
+  }
+
+  /* App body — main bere vše, nav jde dolů */
+  .app-body {
+    flex-direction: column-reverse; /* nav dole */
+    height: calc(100vh - var(--header-h));
+    overflow: hidden;
+  }
+
+  /* ── SPODNÍ NAV TAB BAR ── */
+  .lcars-nav {
+    width: 100%;
+    height: 58px;
+    flex-direction: row;
+    align-items: stretch;
+    border-left: none;
+    border-top: 3px solid var(--lcars-primary);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  /* Dekorativní LCARS bloky v navu — schovají se */
+  .nav-top-block,
+  .nav-middle-block,
+  .nav-spacer,
+  .nav-bottom-block { display: none; }
+
+  /* Nav tlačítka — vodorovně */
+  .nav-buttons {
+    flex-direction: row;
+    width: 100%;
+    gap: 0;
+    padding: 0;
+  }
+
+  .nav-btn {
+    flex: 1;
+    border-radius: 0;
+    justify-content: center;
+    flex-direction: column;
+    padding: 6px 4px;
+    font-size: 8px;
+    letter-spacing: 1px;
+    gap: 3px;
+    text-align: center;
+    height: 100%;
+  }
+
+  .nav-btn:hover { transform: none; }
+  .nav-btn.active { border-top: 3px solid #000; }
+
+  .nav-icon { font-size: 18px; }
+
+  /* Hlavní obsah — flexibilní výška */
+  .app-main {
+    flex: 1;
+    border-left: none;
+    border-bottom: none;
+    min-height: 0;
+  }
+
+  /* ── HEADER ── */
+  :root { --header-h: 52px; }
+
+  .header-curve-block { width: 26px; }
+  .header-bars { width: 50px; }
+  .header-bar-top { height: 26px; }
+  .header-bar-bottom { height: 8px; }
+
+  .header-main-title {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .header-sub { display: none; }
+
+  .user-display-name { display: none; }
+
+  .btn-odhlasit {
+    font-size: 8px;
+    padding: 0 10px;
+    letter-spacing: 1px;
+  }
+
+  .header-right-cap { width: 8px; }
+
+  /* ── ZPRÁVY ── */
+  .messages-container { padding: 10px 10px; gap: 8px; }
+
+  .message { max-width: 90%; }
+
+  .msg-bubble { padding: 8px 10px; }
+  .msg-text { font-size: 13px; }
+
+  .msg-avatar {
+    width: 26px; height: 26px; min-width: 26px;
+    font-size: 11px;
+  }
+
+  .msg-image {
+    max-width: 220px;
+    max-height: 170px;
+  }
+
+  /* ── CHAT INPUT ── */
+  .chat-input-row {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .lcars-input { font-size: 13px; padding: 9px 10px; }
+
+  .btn-odeslat {
+    font-size: 9px;
+    padding: 9px 12px;
+    letter-spacing: 1px;
+  }
+
+  .btn-image-attach { padding: 9px 10px; font-size: 14px; }
+
+  /* ── GALERIE ── */
+  .gallery-add-bar {
+    flex-wrap: wrap;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .gallery-popis-input { max-width: 100%; }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .gallery-item img { height: 110px; }
+
+  /* ── NASTAVENÍ ── */
+  .settings-scroll { padding: 12px; }
+
+  .settings-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .settings-item { padding: 10px; }
+
+  /* ── MODÁL ── */
+  .modal-box {
+    max-width: 98vw;
+    max-height: 96vh;
+  }
+
+  .modal-box > img {
+    max-width: 96vw;
+    max-height: 65vh;
+    margin: 10px auto;
+  }
+
+  .modal-title { font-size: 9px; letter-spacing: 2px; }
+
+  /* ── LOGIN ── */
+  .login-title { font-size: 28px; }
+  .login-content { padding: 24px 22px; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   MALÝ TELEFON — max-width: 420px
+─────────────────────────────────────────────────────────────── */
+@media (max-width: 420px) {
+
+  /* Header ještě kompaktnější */
+  :root { --header-h: 46px; }
+
+  .header-curve-block { width: 18px; }
+  .header-bars { width: 34px; }
+  .header-bar-top { height: 20px; }
+  .header-bar-bottom { height: 6px; }
+
+  .header-main-title { font-size: 9px; letter-spacing: 0px; }
+  .header-user { padding: 0 6px; }
+
+  .user-avatar, .user-avatar-placeholder {
+    width: 26px; height: 26px;
+    font-size: 11px;
+  }
+
+  .btn-odhlasit { font-size: 7px; padding: 0 7px; letter-spacing: 0; }
+
+  /* Nav tab bar — kompaktnější */
+  .lcars-nav { height: 52px; }
+
+  .nav-btn { font-size: 7px; }
+  .nav-icon { font-size: 16px; }
+
+  /* Zprávy */
+  .messages-container { padding: 8px; gap: 6px; }
+  .message { max-width: 95%; }
+  .msg-text { font-size: 12px; }
+  .msg-sender { font-size: 8px; }
+  .msg-cas { font-size: 8px; }
+
+  .msg-image {
+    max-width: 190px;
+    max-height: 140px;
+  }
+
+  /* Chat input — odeslat tlačítko zmenšit */
+  .chat-input-row { padding: 6px 8px; gap: 5px; }
+  .lcars-input { font-size: 12px; padding: 8px 8px; }
+  .btn-odeslat { font-size: 8px; padding: 8px 9px; letter-spacing: 0; }
+  .btn-image-attach { padding: 8px 8px; font-size: 13px; }
+
+  /* Galerie — 2 pevné sloupce */
+  .gallery-add-bar { flex-direction: column; }
+  .gallery-popis-input { max-width: 100%; }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .gallery-item img { height: 95px; }
+  .gallery-popis { font-size: 10px; }
+  .gallery-autor { font-size: 8px; }
+
+  /* Nastavení — 1 sloupec */
+  .settings-grid { grid-template-columns: 1fr; }
+
+  /* Datum oddělovač */
+  .date-separator span { font-size: 8px; letter-spacing: 1px; }
+
+  /* Modál URL obrázku */
+  .modal-small { width: 98%; }
+  .modal-small .lcars-input { margin: 8px 10px; width: calc(100% - 20px); }
+  .modal-actions { padding: 6px 10px 12px; }
+
+  /* Login */
+  .login-title { font-size: 24px; }
+  .login-content { padding: 18px 16px; gap: 10px; }
+  .login-wrapper { width: 96%; }
+  .login-badge { font-size: 9px; letter-spacing: 3px; }
+  .btn-login { font-size: 10px; padding: 12px 14px; }
+
+  /* Sekce header */
+  .sekce-label { font-size: 9px; letter-spacing: 2px; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   LANDSCAPE TELEFON (ležatě) — max-height: 500px + mobil
+   Zmenšit header a nav na minimum
+─────────────────────────────────────────────────────────────── */
+@media (max-height: 500px) and (max-width: 900px) {
+
+  :root { --header-h: 40px; }
+
+  .lcars-nav { height: 46px; }
+  .nav-btn { font-size: 7px; padding: 4px; }
+  .nav-icon { font-size: 14px; }
+
+  .header-main-title { font-size: 9px; }
+  .header-curve-block { width: 20px; }
+  .header-bars { width: 40px; }
+
+  .messages-container { padding: 6px 8px; gap: 5px; }
+  .chat-input-row { padding: 5px 8px; }
+
+  .msg-text { font-size: 12px; }
+  .msg-bubble { padding: 6px 9px; }
+}
