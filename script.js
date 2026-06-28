@@ -1,7 +1,7 @@
-// script.js — LCARS Messenger | Hlavní orchestrátor
-// Propojuje auth, chat, gallery, settings do jednoho celku
+// script.js — LCARS Messenger | Hlavní orchestrátor v2
+// OPRAVA: odstraněn redirect handling, popup funguje přímo
 
-import { prihlasitGooglem, zpracovatRedirectVysledek, odhlasit, sledovatPrihlaseni } from './auth.js';
+import { prihlasitGooglem, odhlasit, sledovatPrihlaseni } from './auth.js';
 import {
   odesilatTextZpravu,
   odesilatObrazekZpravu,
@@ -29,24 +29,18 @@ import {
 } from './settings.js';
 
 // Globální stav
-let aktualniUser       = null;
-let aktualniNastaveni  = { ...VYCHOZI_NASTAVENI };
+let aktualniUser      = null;
+let aktualniNastaveni = { ...VYCHOZI_NASTAVENI };
 
 // ════════════════════════════════════════════════════
 //  INICIALIZACE
 // ════════════════════════════════════════════════════
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // Zpracovat výsledek Google redirect (po přihlášení)
-  const redirectVysledek = await zpracovatRedirectVysledek();
-  if (redirectVysledek?.chyba) {
-    zobrazitLoginChybu(redirectVysledek.chyba);
-  }
-
+document.addEventListener("DOMContentLoaded", () => {
   inicializovatModal();
   navButtony();
   chatButtony();
   galerieButtony();
+  prihlasovaniButtony();
 
   // Sledovat stav přihlášení
   sledovatPrihlaseni(async (user) => {
@@ -66,7 +60,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // ════════════════════════════════════════════════════
-//  PŘEPÍNÁNÍ LOGINSCREEN / APP
+//  PŘIHLAŠOVÁNÍ TLAČÍTKA
+// ════════════════════════════════════════════════════
+function prihlasovaniButtony() {
+  document.getElementById("btnPrihlasit").addEventListener("click", async () => {
+    const errorEl = document.getElementById("loginError");
+    errorEl.style.display = "none";
+    const btn = document.getElementById("btnPrihlasit");
+    btn.textContent = "PŘIPOJUJI K FLOTILE...";
+    btn.disabled = true;
+
+    try {
+      await prihlasitGooglem();
+      // onAuthStateChanged se postará o zbytek
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = "block";
+      btn.innerHTML = '<span class="btn-icon">G</span> PŘIHLÁSIT SE PŘES GOOGLE';
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("btnOdhlasit").addEventListener("click", async () => {
+    await odhlasit();
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  ZOBRAZENÍ
 // ════════════════════════════════════════════════════
 function zobrazitApp(user) {
   document.getElementById("loginScreen").style.display = "none";
@@ -86,54 +107,31 @@ function zobrazitLogin() {
   document.getElementById("loginScreen").style.display = "flex";
   document.getElementById("appContainer").style.display = "none";
   document.getElementById("headerUserInfo").innerHTML = "";
-}
 
-function zobrazitLoginChybu(msg) {
-  const el = document.getElementById("loginError");
-  if (el) {
-    el.textContent = msg;
-    el.style.display = "block";
+  const btn = document.getElementById("btnPrihlasit");
+  if (btn) {
+    btn.innerHTML = '<span class="btn-icon">G</span> PŘIHLÁSIT SE PŘES GOOGLE';
+    btn.disabled = false;
   }
 }
-
-// ════════════════════════════════════════════════════
-//  LOGIN BUTTON
-// ════════════════════════════════════════════════════
-document.getElementById("btnPrihlasit").addEventListener("click", async () => {
-  const el = document.getElementById("loginError");
-  if (el) el.style.display = "none";
-  try {
-    await prihlasitGooglem();  // redirect — stránka se načte znovu
-  } catch (err) {
-    zobrazitLoginChybu(err.message);
-  }
-});
-
-document.getElementById("btnOdhlasit").addEventListener("click", async () => {
-  await odhlasit();
-});
 
 // ════════════════════════════════════════════════════
 //  NAVIGACE
 // ════════════════════════════════════════════════════
 function navButtony() {
   document.querySelectorAll(".nav-btn[data-sekce]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      prepinatSekci(btn.dataset.sekce);
-    });
+    btn.addEventListener("click", () => prepinatSekci(btn.dataset.sekce));
   });
 }
 
 function prepinatSekci(sekce) {
-  // Aktivní nav button
   document.querySelectorAll(".nav-btn[data-sekce]").forEach(b => {
     b.classList.toggle("active", b.dataset.sekce === sekce);
   });
-  // Viditelná sekce
   document.querySelectorAll(".sekce").forEach(s => {
     s.classList.toggle("active", s.id === `sekce-${sekce}`);
   });
-  // Speciální akce pro nastavení
+
   if (sekce === "nastaveni" && aktualniUser) {
     vykresitNastaveni(aktualniNastaveni, document.getElementById("settingsPanel"));
     nastavitSettingsButtony();
@@ -141,10 +139,9 @@ function prepinatSekci(sekce) {
 }
 
 // ════════════════════════════════════════════════════
-//  CHAT
+//  CHAT TLAČÍTKA
 // ════════════════════════════════════════════════════
 function chatButtony() {
-  // Odeslat Enterem
   document.getElementById("msgInput").addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -152,22 +149,19 @@ function chatButtony() {
     }
   });
 
-  // Tlačítko Odeslat
   document.getElementById("btnOdeslat").addEventListener("click", odplatZpravu);
 
-  // Tlačítko Obrázek v chatu
   document.getElementById("btnObrazekChat").addEventListener("click", () => {
     document.getElementById("imageUrlModal").classList.add("active");
     document.getElementById("imageUrlInput").focus();
   });
 
-  // Modal pro URL obrázku — odeslat
   document.getElementById("btnOdeslatObrazek").addEventListener("click", odplatObrazek);
+
   document.getElementById("imageUrlInput").addEventListener("keydown", (e) => {
     if (e.key === "Enter") odplatObrazek();
   });
 
-  // Modal — zavřít
   document.getElementById("btnZavritImageModal").addEventListener("click", () => {
     document.getElementById("imageUrlModal").classList.remove("active");
     document.getElementById("imageUrlInput").value = "";
@@ -201,7 +195,7 @@ async function odplatObrazek() {
 }
 
 // ════════════════════════════════════════════════════
-//  GALERIE
+//  GALERIE TLAČÍTKA
 // ════════════════════════════════════════════════════
 function galerieButtony() {
   document.getElementById("btnPridatObrazekGalerie").addEventListener("click", async () => {
@@ -219,7 +213,7 @@ function galerieButtony() {
 }
 
 // ════════════════════════════════════════════════════
-//  NASTAVENÍ
+//  NASTAVENÍ TLAČÍTKA
 // ════════════════════════════════════════════════════
 function nastavitSettingsButtony() {
   const btnUlozit = document.getElementById("btnUlozitNastaveni");
@@ -264,11 +258,11 @@ function vykresitZpravy(zpravy) {
 
   let prevDatum = null;
   const html = zpravy.map(z => {
-    const jaMohu    = z.senderId === aktualniUser?.uid;
-    const initial   = (z.senderName || "?").charAt(0).toUpperCase();
-    const cas       = formatovatCas(z.timestamp);
-    const datum     = z.timestamp ? formatovatDatum(z.timestamp) : null;
-    let oddelovac   = "";
+    const jaMohu  = z.senderId === aktualniUser?.uid;
+    const initial = (z.senderName || "?").charAt(0).toUpperCase();
+    const cas     = formatovatCas(z.timestamp);
+    const datum   = z.timestamp ? formatovatDatum(z.timestamp) : null;
+    let oddelovac = "";
 
     if (datum && datum !== prevDatum) {
       oddelovac = `<div class="date-separator"><span>${datum}</span></div>`;
@@ -332,13 +326,11 @@ function vykresitGalerii(obrazky) {
 }
 
 // ════════════════════════════════════════════════════
-//  GLOBÁLNÍ FUNKCE (volané z dynamického HTML)
+//  GLOBÁLNÍ FUNKCE (onclick v dynamickém HTML)
 // ════════════════════════════════════════════════════
-window.__otevritModal = (url, popis, autor) => otevritModal(url, popis, autor);
+window.__otevritModal  = (url, popis, autor) => otevritModal(url, popis, autor);
 window.__smazatGalerie = async (id) => {
-  if (confirm("Smazat obrázek z galerie? Tato akce je nevratná.")) {
-    await smazatZGalerie(id);
-  }
+  if (confirm("Smazat obrázek z galerie?")) await smazatZGalerie(id);
 };
 
 // ════════════════════════════════════════════════════
