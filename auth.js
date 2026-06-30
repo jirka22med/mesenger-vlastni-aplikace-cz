@@ -6,13 +6,21 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   doc,
   setDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// Explicitní LOCAL persistence — session přežije zavření okna i F5.
+// Bez tohoto kroku mohou prohlížeče jako Brave (Shields) session ztrácet.
+setPersistence(auth, browserLocalPersistence).catch((err) => {
+  console.warn("Persistence se nepodařilo nastavit:", err.message);
+});
 
 // ╔══════════════════════════════════════════════════╗
 // ║  WHITELIST — povolení uživatelé                  ║
