@@ -42,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
   galerieButtony();
   prihlasovaniButtony();
 
+  let prvniKontrola = true;
+
   // Sledovat stav přihlášení
   sledovatPrihlaseni(async (user) => {
     if (user) {
@@ -55,6 +57,12 @@ document.addEventListener("DOMContentLoaded", () => {
       odpojitChat();
       odpojitGalerii();
       zobrazitLogin();
+    }
+
+    // Loading screen schováme až po PRVNÍM ověření — ne při každé změně
+    if (prvniKontrola) {
+      document.getElementById("loadingScreen").style.display = "none";
+      prvniKontrola = false;
     }
   });
 });
