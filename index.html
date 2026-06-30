@@ -12,9 +12,18 @@
 <body>
 
   <!-- ╔══════════════════════════════════════════════╗ -->
+  <!-- ║  LOADING SCREEN — zabraňuje bliknutí loginu  ║ -->
+  <!-- ╚══════════════════════════════════════════════╝ -->
+  <div id="loadingScreen">
+    <div class="loading-bar-block"></div>
+    <div class="loading-text">OVĚŘUJI PŘÍSTUPOVÉ OPRÁVNĚNÍ…</div>
+    <div class="loading-bar-block loading-bar-secondary"></div>
+  </div>
+
+  <!-- ╔══════════════════════════════════════════════╗ -->
   <!-- ║  LOGIN SCREEN                                ║ -->
   <!-- ╚══════════════════════════════════════════════╝ -->
-  <div id="loginScreen">
+  <div id="loginScreen" style="display:none">
     <div class="login-wrapper">
       <div class="login-left-bar"></div>
       <div class="login-panel">
@@ -47,9 +56,10 @@
     <!-- LCARS HEADER -->
     <header class="lcars-header">
       <div class="header-left">
-        
+        <div class="header-curve-block"></div>
         <div class="header-bars">
-          
+          <div class="header-bar-top"></div>
+          <div class="header-bar-bottom"></div>
         </div>
       </div>
       <div class="header-title">
@@ -58,7 +68,7 @@
       </div>
       <div class="header-user" id="headerUserInfo"></div>
       <button class="btn-odhlasit" id="btnOdhlasit">ODHLÁSIT</button>
-      
+      <div class="header-right-cap"></div>
     </header>
 
     <!-- HLAVNÍ TĚLO -->
@@ -66,7 +76,8 @@
 
       <!-- LCARS NAVIGACE (levý panel) -->
       <nav class="lcars-nav">
-        
+        <div class="nav-top-block"></div>
+        <div class="nav-middle-block"></div>
 
         <div class="nav-buttons">
           <button class="nav-btn active" data-sekce="chat">
@@ -81,7 +92,7 @@
         </div>
 
         <div class="nav-spacer"></div>
-        
+        <div class="nav-bottom-block"></div>
       </nav>
 
       <!-- OBSAH -->
